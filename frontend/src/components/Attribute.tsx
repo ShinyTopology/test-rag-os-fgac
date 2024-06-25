@@ -2,41 +2,31 @@ import { useState, useEffect } from "react";
 import { API } from "aws-amplify";
 import { Attribute } from "../common/types";
 
-const InitialAttributes: Attribute = {
-  attributes: [
-    {
-      name: "custom:access_level",
-      value: "nothon",
-    },
-    {
-      name: "custom:department",
-      value: "nothing",
-    },
-  ],
-};
+const InitialAttributes: Attribute = {attributes: [{
+  user_name: "string",
+  user_id: "string",
+  attributes: {
+    department: "string",
+    access_level: "string",
+  }}]};
 
 const Attributes: React.FC = () => {
   const [attributes, setAttributes] = useState<Attribute>(InitialAttributes);
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
   const [attributeStatus, setAttributeStatus] = useState<string>("idle");
 
-  const fetchData = async () => {
+  const getAttributes = async () => {
     setAttributeStatus("loading");
 
     // TODO : Call API to get attributes
     // const attributes = await API.get("RestApi", "/attribute/", {});
-    const attributes: Attribute = {
-      attributes: [
-        {
-          name: "custom:access_level",
-          value: "restricted",
-        },
-        {
-          name: "custom:department",
-          value: "engineering",
-        },
-      ],
-    };
+    const attributes: Attribute = {attributes: [{
+      user_name: "string",
+      user_id: "string",
+      attributes: {
+        department: "string",
+        access_level: "string",
+      }}]};
 
     setAttributeStatus("idle");
     setAttributes(attributes);
@@ -50,7 +40,7 @@ const Attributes: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    getAttributes();
   }, []);
 
   const handleInputChange = (name: string, value: string) => {
@@ -60,10 +50,10 @@ const Attributes: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitAttribute = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: Call API to save attributes
-    // const attributes = await API.post("RestApi", "/attribute/", {});
+    const attributes = await API.post("RestApi", "/invoke", {});
     console.log("Form submitted with values:", inputValues);
     // inputValues 
     // {
@@ -78,11 +68,11 @@ const Attributes: React.FC = () => {
     <div className="justify-between pt-6 pb-4">
       {
         attributeStatus == "Successful" && (
-          <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
-            <div class="flex">
-              <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+          <div className="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
+            <div className="flex">
+              <div className="py-1"><svg className="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
               <div>
-                <p class="font-bold">Attributes updated successfully.</p>
+                <p className="font-bold">Attributes updated successfully.</p>
               </div>
             </div>
           </div>
@@ -94,7 +84,7 @@ const Attributes: React.FC = () => {
       <div className="w-full">
         <form
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmitAttribute}
         >
           {attributes &&
             attributes.attributes.map((attribute, i) => (
