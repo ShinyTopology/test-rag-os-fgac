@@ -3,7 +3,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Layout from "./routes/layout";
-import Chat from "./routes/chat";
+import Search from "./routes/search";
 import Attribute from "./routes/attribute"
 
 Amplify.configure({
@@ -16,7 +16,7 @@ Amplify.configure({
     endpoints: [
       {
         name: "RestApi",
-        endpoint: import.meta.env.VITE_REST_API_ENDPOINT,
+        endpoint: import.meta.env.VITE_API_ENDPOINT,
         region: import.meta.env.VITE_REGION,
         custom_header: async () => {
           return {
@@ -25,19 +25,7 @@ Amplify.configure({
               .getJwtToken()}`,
           };
         },
-      },
-      {
-        name: "WebSocketApi",
-        endpoint: import.meta.env.VITE_WS_API_ENDPOINT,
-        region: import.meta.env.VITE_REGION,
-        custom_header: async () => {
-          return {
-            Authorization: `Bearer ${(await Auth.currentSession())
-              .getIdToken()
-              .getJwtToken()}`,
-          };
-        },
-      },
+      }
     ],
   },
 });
@@ -49,7 +37,7 @@ let router = createBrowserRouter([
     children: [
       {
         path: "/",
-        Component: Chat,
+        Component: Search,
       },
       {
         path: "/attribute",
