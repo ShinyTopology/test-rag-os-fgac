@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Layout from "./routes/layout";
 import Search from "./routes/search";
-import Attribute from "./routes/attribute"
+
 
 Amplify.configure({
   Auth: {
