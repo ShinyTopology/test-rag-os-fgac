@@ -1,10 +1,7 @@
 export interface Attribute {
-  attributes: {
-    user_name: string;
-    user_id: string;
+    Username: string;
     attributes: {
-      department: string;
-      access_level: string;
-    }
-  }[];
+      Name: string;
+      Value: string
+    }[]
 }
