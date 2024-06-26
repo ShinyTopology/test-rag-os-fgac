@@ -39,10 +39,6 @@ let router = createBrowserRouter([
         path: "/",
         Component: Search,
       },
-      {
-        path: "/attribute",
-        Component: Attribute,
-      },
     ],
   },
 ]);
