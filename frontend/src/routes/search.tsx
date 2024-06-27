@@ -1,10 +1,12 @@
 import React, { useState, useEffect, KeyboardEvent } from "react";
 import { API } from "aws-amplify";
 import SearchDocuments from "../components/SearchDocuments";
+import LoadingGrid from "../../public/loading-grid.svg";
 
 const Search: React.FC = () => {
 
   const [searchResult, setSearchResult] = useState<string | null>("");
+  const [loading, setLoading] = React.useState<string>("idle");
   const [messageStatus, setMessageStatus] = useState<string>("idle");
   const [prompt, setPrompt] = useState("");
 

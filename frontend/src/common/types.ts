@@ -1,7 +1,18 @@
-export interface Attribute {
-    Username: string;
-    attributes: {
-      Name: string;
-      Value: string
-    }[]
+interface UnicornAttributes {
+  name: string;
+  value: string;
+}
+
+interface UnicornUser {
+  username: string;
+  attributes: UnicornAttributes[];
+}
+
+interface CognitoAttributes {
+  [key: string]: string;
+}
+
+interface CognitoUser {
+  username: string;
+  attributes: CognitoAttributes;
 }

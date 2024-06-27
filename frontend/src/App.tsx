@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Layout from "./routes/layout";
 import Search from "./routes/search";
-
+import Attribute from "./routes/attribute"
 
 Amplify.configure({
   Auth: {
@@ -23,6 +23,9 @@ Amplify.configure({
             Authorization: `Bearer ${(await Auth.currentSession())
               .getIdToken()
               .getJwtToken()}`,
+            'x-access-token': `${(await Auth.currentSession())
+              .getAccessToken()
+              .getJwtToken()}`,
           };
         },
       }
@@ -38,6 +41,10 @@ let router = createBrowserRouter([
       {
         path: "/",
         Component: Search,
+      },
+      {
+        path: "/attribute",
+        Component: Attribute,
       },
     ],
   },
