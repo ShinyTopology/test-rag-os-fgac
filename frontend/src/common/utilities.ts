@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { UnicornUser, UnicornAttributes, CognitoAttributes, CognitoUser } from "./types";
+import { UnicornUser, CognitoAttributes, CognitoUser } from "./types";
 
 export function getDateTime(date: string): string {
   return format(new Date(date), "MMMM d, yyyy - H:mm");
@@ -7,12 +7,13 @@ export function getDateTime(date: string): string {
 
 // Transform cognito format to Unicorn format
 export function convertCognitoToUnicorn(cognitoUser: CognitoUser): UnicornUser {
+  
   const unicornUser: UnicornUser = {
     username: cognitoUser.username,
     attributes: {},
   };
 
-  cognitoUser.attributes.forEach(attr => {
+  cognitoUser.attributes.map((attr: CognitoAttributes) => {
     unicornUser.attributes[attr.Name] = attr.Value;
   });
 
@@ -21,13 +22,18 @@ export function convertCognitoToUnicorn(cognitoUser: CognitoUser): UnicornUser {
 
 // Transform cognito format to Unicorn format
 export function convertUnicornToCognito(unicornUser: UnicornUser): CognitoUser {
+  const cognitoAttributes : CognitoAttributes[] = []
+  
   const cognitoUser: CognitoUser = {
     username: unicornUser.username,
-    attributes: {},
+    attributes: cognitoAttributes,
   };
 
-  unicornUser.attributes.forEach(attr => {
-    cognitoUser.attributes[attr.Name] = attr.Value;
+  Object.keys(unicornUser.attributes).forEach(key => {
+    cognitoAttributes.push({
+      Name : key,
+      Value : unicornUser.attributes[key]
+    })
   });
 
   return cognitoUser;
@@ -40,7 +46,7 @@ export const departmentList : string[] = [
 ]
 
 export const accessLevelList : string[] = [
-  "restricted",
-  "internal",
+  "support",
+  "confidential",
   "public",
 ]

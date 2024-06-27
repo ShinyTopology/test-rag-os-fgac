@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { API } from "aws-amplify";
-import { UnicornUser } from "../common/types";
-import { convertCognitoToUnicorn, departmentList, accessLevelList } from "../common/utilities"
+import { UnicornUser, CognitoUser } from "../common/types";
+import { convertCognitoToUnicorn, convertUnicornToCognito, departmentList, accessLevelList } from "../common/utilities"
 
 
 const Attributes: React.FC = () => {
   const [users, setUsers] = useState<UnicornUser[]>([]);
-  const [editUnicornUser, setEditUnicornUser] = useState<UnicornUser>();
+  const [editUnicornUser, setEditUnicornUser] = useState<UnicornUser | null >();
   const [attributeStatus, setAttributeStatus] = useState<string>("idle");
 
   const fetchAttributes = async () => {
@@ -19,14 +19,26 @@ const Attributes: React.FC = () => {
       return convertCognitoToUnicorn(user)
     })
 
+    console.log('unicornusers')
     console.log(unicornUsers)
+
+    // Parse users
+    const back = unicornUsers.map((user: UnicornUser) => {
+      return convertUnicornToCognito(user)
+    })
+    
+
+    console.log('back')
+    console.log(back)
+
+
 
     setUsers(unicornUsers)
     setAttributeStatus("idle");
   };
 
   const handleEditClick = async (i: number) => {
-    console.log("CLICKED")
+    setAttributeStatus("idle")
     setEditUnicornUser(users[i])
     console.log(users[i])
   }
@@ -34,6 +46,20 @@ const Attributes: React.FC = () => {
   const handleSaveClick = async () => {
     // TODO : Submit attributes update.
     console.log("SAVED")
+    setAttributeStatus("Successful")
+    setEditUnicornUser(null)
+  }
+
+  const onDepartmentSelect = (department:string) => {
+    const newUser = editUnicornUser;
+    newUser!.attributes['custom:department'] = department
+    setEditUnicornUser(newUser)
+    console.log(editUnicornUser)
+  }
+
+  const onAccessLevelSelect = (access_level:string) => {
+    editUnicornUser!.attributes['custom:access_level'] = access_level
+    console.log(editUnicornUser)
   }
 
   useEffect(() => {
@@ -82,7 +108,9 @@ const Attributes: React.FC = () => {
               <tbody>
                 {
                   users.map((unicornUser, i) => (
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                        key={`${'row_'+i}`}
+                    >
                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                           {unicornUser.username}
                         </th>
@@ -91,11 +119,13 @@ const Attributes: React.FC = () => {
                         </td>
 
                         <td className="px-6 py-4">
-                          <select id="department_select" className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+                          <select id={`${i + 'department_select'}`} className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
                             disabled={!editUnicornUser || (editUnicornUser && editUnicornUser.attributes.sub !== unicornUser.attributes.sub)}
+                            defaultValue={unicornUser.attributes["custom:department"]}
                           >
                           {departmentList.map((department) => (
-                            <option value={department} selected={unicornUser.attributes["custom:department"] === department}>
+                            <option key={`${i+'_'+department}`} value={department}
+                                    onSelect={() => onDepartmentSelect(department)}>
                               {department}
                             </option>
                           ))}
@@ -103,11 +133,14 @@ const Attributes: React.FC = () => {
                         </td>
 
                         <td className="px-6 py-4">
-                          <select id="access_control_select" className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+                          <select id={`${i + 'access_control_select'}`} className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
                             disabled={!editUnicornUser || (editUnicornUser && editUnicornUser.attributes.sub !== unicornUser.attributes.sub)}
+                            defaultValue={unicornUser.attributes["custom:access_level"]}
                           >
                           {accessLevelList.map((accessLevel) => (
-                            <option value={accessLevel} selected={unicornUser.attributes["custom:access_level"] === accessLevel}>
+                            <option key={`${i+'_'+accessLevel}`} value={accessLevel}
+                                    onSelect={() => onAccessLevelSelect(accessLevel)}
+                            >
                               {accessLevel}
                             </option>
                           ))}
