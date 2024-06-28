@@ -10,6 +10,21 @@ Parameters:
     Type: String
     Description: "The name of the secrets storing GitHub token for accessing the repository."
 
+  SsmAmplifyViteApiEndpoint:
+    Type: String
+    Description: "The name of the SSM parameter storing API endpoint for Vite."
+    Default: APIGWInvokeEndpoint
+
+  SsmAmplifyViteUserPoolId:
+    Type: String
+    Description: "The User Pool ID for the Amplify Vite app."
+    Default: UserPoolID
+
+  SsmAmplifyViteUserPoolClientId:
+    Type: String
+    Description: "The User Pool Client ID for the Amplify Vite app."
+    Default: UserPoolClientID
+
 Resources:
   AmplifyFrontendApp:
     Type: "AWS::Amplify::App"
@@ -34,24 +49,23 @@ Resources:
               cache:
                 paths:
                   - node_modules/**/*
-              appRoot: frontend
-      AccessToken: "{{resolve:secretsmanager:${GitHubTokenSecretName}}}"
+            appRoot: frontend
+      AccessToken: !Sub "{{resolve:secretsmanager:${GitHubTokenSecretName}}}"
       EnvironmentVariables:
         - Name: "AMPLIFY_MONOREPO_APP_ROOT"
           Value: "frontend"
         - Name: "VITE_REGION"
           Value: !Ref "AWS::Region"
         - Name: "VITE_API_ENDPOINT"
-          Value: "{{resolve:ssm:APIGWInvokeEndpoint}}"
+          Value: !Sub "{{resolve:ssm:${SsmAmplifyViteApiEndpoint}}}"
         - Name: "VITE_USER_POOL_ID"
-          Value: "{{resolve:ssm:UserPoolID}}"
+          Value: !Sub "{{resolve:ssm:${SsmAmplifyViteUserPoolId}}}"
         - Name: "VITE_USER_POOL_CLIENT_ID"
-          Value: "{{resolve:ssm:UserPoolClientID}}"
+          Value: !Sub "{{resolve:ssm:${SsmAmplifyViteUserPoolClientId}}}"
 
   AmplifyBranch:
     Type: "AWS::Amplify::Branch"
     Properties:
       BranchName: "main"
-      AppId: !Ref AmplifyFrontendApp
+      AppId: !GetAtt AmplifyFrontendApp.AppId
       EnableAutoBuild: true
-

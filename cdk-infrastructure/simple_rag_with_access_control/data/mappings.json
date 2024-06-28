@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "doc_text": {
+      "type": "text"
+    },
+    "doc_embedding": {
+      "type": "knn_vector",
+      "dimension": 1024,
+      "method": {
+            "name": "hnsw",
+            "space_type": "l2",
+            "engine": "faiss"
+        }
+    },
+    "department": {
+      "type": "text"
+      },
+    "access_level": {
+      "type": "text"
+      }
+  }
+}
