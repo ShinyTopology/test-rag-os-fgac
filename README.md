@@ -36,73 +36,29 @@
     ```
 
 ## Install frontend (in Amplify hosting)
-    // TODO
 
+AWS Amplify Hosting enables a fully-managed deployment of the application's React frontend in an AWS-managed account using Amazon S3 and Amazon CloudFront. You can optionally run the React frontend locally by skipping to Deploy the application with AWS SAM.
 
-## Notes for developers
-Revise below files to call API
+To set up Amplify Hosting:
 
-1. Submit message `frontend/src/route/chat.tsx` submitMessage()
-    ```json
-    Expected input
-    {
-        prompt: "prompt"
-    }
-    ```
+1. Fork this GitHub repository and take note of your repository URL, for example https://github.com/user/rag-os-fgac/.
 
-    ```json
-    Expected output
-    {
-        type: "ai",
-        content: "Some answers here",
-    }
-    ```
+2. Create a GitHub fine-grained access token for the new repository by following this guide. For the Repository permissions, select Read and write for Content and Webhooks.
+https://docs.aws.amazon.com/amplify/latest/userguide/setting-up-GitHub-access.html#setting-up-github-app-cloudformation
 
-2. Get attributes `frontend/src/component/Attribute.tsx`
-    ```json
-    Expected input
-    {
-    }
-    ```
+Select the Plaintext tab and confirm your secret looks like this:
+```
+github_pat_T2wyo------------------------------------------------------------------------rs0Pp
+```
 
-    ```json
-    Expected output
-    {
-        "attributes": [{
-            "name": "custom:access_level",
-            "value": "nothing",
-        },{
-            "name": "custom:department",
-            "value": "nothing",
-        },
-    ],
-    }
-    ```
+3. Create a new secret called `FrontendGithubToken` in AWS Secrets Manager and input your fine-grained access token as plaintext. 
 
-3. Update attributes `frontend/src/component/Attribute.tsx`
-    ```json
-    Expected input
-    {
-        "attributes": [{
-            "name": "custom:access_level",
-            "value": "nothing",
-        },{
-            "name": "custom:department",
-            "value": "nothing",
-        },
-    ],
-    }
-    ```
+### Deploy the frontend.
 
-    ```json
-    Expected output
-    {
-        "status" : "Successful"
-    }
-    ```
-4. Change browser title `frontend/index.html`
+1. Change directory to 
+2. Open `deploy.sh` and put the github url as `FRONTEND_REPOSITORY` variable. It should be something like 'https://github.com/user/rag-os-fgac/'
+3. Run `deploy.sh` to deploy cloudformation template.
 
-5. Change logo `frontend/public/favicon.ico`
 
 
 <details>
